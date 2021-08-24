@@ -14,7 +14,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.table.DefaultTableModel;
 import model.Evento;
-//import model.War;
 
 /**
  *

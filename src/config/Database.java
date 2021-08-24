@@ -6,7 +6,6 @@
 package config;
 
 import java.sql.*;
-//import model.War;
 import java.util.ArrayList;
 import java.util.List;
 import model.Evento;
