@@ -394,19 +394,23 @@ public class CrudViewTesting extends javax.swing.JFrame {
     }//GEN-LAST:event_loadBtnActionPerformed
 
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
-        eliminar();
-        cargarTabla("");
+        if (eliminar()){
+            cargarTabla("");
+       }
  
     }//GEN-LAST:event_deleteBtnActionPerformed
 
     private void updateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateBtnActionPerformed
-        update();
-        cargarTabla("");
+    
+        if(update()){
+            cargarTabla("");
+        }
     }//GEN-LAST:event_updateBtnActionPerformed
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-        insertar();
-        cargarTabla("");
+      if (insertar()){
+         cargarTabla("");
+        }
     }//GEN-LAST:event_addBtnActionPerformed
 
     private void lugarTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lugarTxtActionPerformed
@@ -470,7 +474,7 @@ public class CrudViewTesting extends javax.swing.JFrame {
         return "ID";
     }
 
-    private void insertar() {
+    private boolean insertar() {
 
         String horaInicio = formater.format(horaInicioTxt.getValue());
         String horaFinal = formater.format(horaFinalTxt.getValue());
@@ -483,6 +487,7 @@ public class CrudViewTesting extends javax.swing.JFrame {
                 || horaInicio.equals("") || detalles.equals("")) {
 
             JOptionPane.showMessageDialog(null, "Favor de llenar los campos");
+            return false;
         } 
         else  {
             java.sql.Date fecha = new java.sql.Date(date.getTime());
@@ -501,18 +506,20 @@ public class CrudViewTesting extends javax.swing.JFrame {
                 if (database.insertarEvento(nuevoEvento)) {
                     JOptionPane.showMessageDialog(null, "Se insertó exitosamente");
                     limpiarTextbox();
+                    return true; 
                 } 
                 else {
                     JOptionPane.showMessageDialog(null, "Hubo un error al insertar los registros.");
+                    return false;
                 }
             }
-        }
-         limpiarTabla();
+            return false;
+        }        
     }
 
-    private void update() {
+    private boolean update() {
         
-        String nombre = nombreTxt.getText();
+  String nombre = nombreTxt.getText();
         String lugar = lugarTxt.getText();
         String horaInicio = formater.format(horaInicioTxt.getValue());        
         String horaFinal = formater.format(horaFinalTxt.getValue());
@@ -522,12 +529,14 @@ public class CrudViewTesting extends javax.swing.JFrame {
         int row = dataTable.getSelectedRow();
         if (row < 0) {
             JOptionPane.showMessageDialog(null, "Por favor, seleccione un registro");
+            return false;
         }
 
        else if (nombre.equals("") || lugar.equals("") || horaFinal.equals("") || date == null
                 || horaInicio.equals("") || detalles.equals("")) {
             
             JOptionPane.showMessageDialog(null, "Favor de llenar los campos");
+            return false;
         }
        
         else if (validarHora(Time.valueOf(horaInicio), Time.valueOf(horaFinal))) {
@@ -546,28 +555,33 @@ public class CrudViewTesting extends javax.swing.JFrame {
             if (database.actualizarEvento(eventoActualizado)){
                 JOptionPane.showMessageDialog(null, "Evento actualizado");
                 limpiarTextbox();
+                return true;
             }
             else{
                 JOptionPane.showMessageDialog(null, "Hubo un error al actualizar el evento");
+                return false;
             }
         }
-         limpiarTabla();
+         return false;       
     }
 
-    private void eliminar() {
-        int selectedRow = dataTable.getSelectedRow();
+    private boolean eliminar() {
+       int selectedRow = dataTable.getSelectedRow();
 
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(null, "Por favor, seleccione un registro");
+            return false;
         }
         
         else if ( JOptionPane.showConfirmDialog(null, "Esta seguro de que desea eliminar este registro?") == 0) {
                 database.eliminarEvento(id);
                 JOptionPane.showMessageDialog(null, "Eliminado");
                 limpiarTextbox();
+                return true;
             }
-        limpiarTabla();
-    }
+        return false;
+    }       
+    
 
     private void limpiarTabla() {
         dataTable.setModel(new DefaultTableModel(null, new String[]{"ID", "Nombre", "Fecha", "Lugar", "Hora inicio", "Hora final", "Detalles"}));
@@ -583,6 +597,7 @@ public class CrudViewTesting extends javax.swing.JFrame {
         horaInicioTxt.setValue(Time.valueOf(time.format(formatter)));
         jTextArea1.setText("");
         fechaCalendar.setDate(null);
+        txtSearch.setText("");
         
         formatearSpinners();
     }
